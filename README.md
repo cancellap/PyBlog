@@ -1,5 +1,5 @@
 # blog-microservico
-
+```
 blog_project/
 ├── app/
 │   ├── models/           # ORM models (User, Post, Comment)
@@ -12,3 +12,4 @@ blog_project/
 ├── requirements.txt
 ├── .env
 └── README.md
+```
