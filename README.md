@@ -1,4 +1,4 @@
-# blog-microservico
+# pyblog
 ```
 blog_project/
 ├── app/
@@ -13,3 +13,4 @@ blog_project/
 ├── .env
 └── README.md
 ```
+uvicorn app.main:app --reload
