@@ -20,7 +20,8 @@ def create_user(db: Session, user_data: UserCreateDTO):
         username=user_data.username,
         email=user_data.email,
         password=hashed_password,
-        created_at=datetime.utcnow()
+        created_at=datetime.utcnow(),
+        posts=[]
     )
 
     db.add(new_user)

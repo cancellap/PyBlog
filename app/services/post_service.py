@@ -7,3 +7,6 @@ def create_post(db: Session, title: str, content: str, user_id: int):
     db.commit()
     db.refresh(new_post)
     return new_post
+
+def get_post_by_id(db: Session, post_id: int):
+    return db.query(Post).filter(Post.id == post_id).first()
