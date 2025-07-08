@@ -12,5 +12,6 @@ class Post(Base):
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"))
+    deleted_at = Column(DateTime, nullable=True)
     
     owner = relationship("User", back_populates="posts")

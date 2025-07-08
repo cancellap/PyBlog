@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
+from app.models.post_model import Post
 from app.models.users_model import User
 from app.dtos.user_create_dto import UserCreateDTO
 from fastapi import HTTPException
@@ -28,3 +29,27 @@ def create_user(db: Session, user_data: UserCreateDTO):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+def get_user_by_id(db: Session, user_id: int):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    return user
+
+
+def get_all_posts_by_user_id(db: Session, user_id: int):
+    posts = db.query(Post).filter(Post.user_id == user_id).all()
+    post_list = []
+    # for post in posts:
+    #     user = db.query(User).filter(User.id == post.user_id).first()
+    #     post_return = {
+    #         "id": post.id,
+    #         "title": post.title,
+    #         "content": post.content,
+    #         "created_at": post.created_at,
+    #         "user_id": post.user_id,
+    #         "username": user.username if user else None
+    #     }
+    #     post_list.append(post_return)
+    return posts
