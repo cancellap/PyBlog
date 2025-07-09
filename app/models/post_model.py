@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -10,7 +10,7 @@ class Post(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     content = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
     user_id = Column(Integer, ForeignKey("users.id"))
     deleted_at = Column(DateTime, nullable=True)
     

@@ -1,12 +1,16 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
+from app.dtos.post.post_with_user_dto import PostWithUserDTO
+from app.dtos.user.user_response_dto import UserResponseDTO
 from app.models.post_model import Post
 from app.models.users_model import User
-from app.dtos.user_create_dto import UserCreateDTO
+from app.dtos.user.user_create_dto import UserCreateDTO
 from fastapi import HTTPException
 from passlib.hash import bcrypt
 
-def create_user(db: Session, user_data: UserCreateDTO):
+from app.schemas.user_schema import UserSchema
+
+def create_user(db: Session, user_data: UserCreateDTO)-> UserResponseDTO:
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email já cadastrado")
@@ -21,7 +25,7 @@ def create_user(db: Session, user_data: UserCreateDTO):
         username=user_data.username,
         email=user_data.email,
         password=hashed_password,
-        created_at=datetime.utcnow(),
+        created_at=datetime.datetime.now(timezone.utc),
         posts=[]
     )
 
@@ -30,7 +34,7 @@ def create_user(db: Session, user_data: UserCreateDTO):
     db.refresh(new_user)
     return new_user
 
-def get_user_by_id(db: Session, user_id: int):
+def get_user_by_id(db: Session, user_id: int)-> UserResponseDTO:
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
@@ -38,18 +42,43 @@ def get_user_by_id(db: Session, user_id: int):
     return user
 
 
-def get_all_posts_by_user_id(db: Session, user_id: int):
+def get_all_posts_by_user_id_include_deleted(db: Session, user_id: int) -> PostWithUserDTO:
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
     posts = db.query(Post).filter(Post.user_id == user_id).all()
-    post_list = []
-    # for post in posts:
-    #     user = db.query(User).filter(User.id == post.user_id).first()
-    #     post_return = {
-    #         "id": post.id,
-    #         "title": post.title,
-    #         "content": post.content,
-    #         "created_at": post.created_at,
-    #         "user_id": post.user_id,
-    #         "username": user.username if user else None
-    #     }
-    #     post_list.append(post_return)
-    return posts
+
+    posts_with_user = PostWithUserDTO(
+        id=user.id,
+        user=user,
+        posts=posts
+    )
+    return posts_with_user
+
+def get_all_posts_by_user_id(db: Session, user_id: int) -> PostWithUserDTO:
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    posts = db.query(Post).filter(Post.user_id == user_id, Post.deleted_at == None).all()
+
+    posts_with_user = PostWithUserDTO(
+        id=user.id,
+        user=user,
+        posts=posts
+    )
+
+    return posts_with_user
+
+def delete_user_by_id(db: Session, user_id: int):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    user.deleted_at = datetime.now(timezone.utc)
+    db.commit()
+    
+    return True

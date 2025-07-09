@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from app.models.post_model import Post
 from app.models.users_model import User
@@ -26,7 +26,7 @@ def get_post_by_id(db: Session, post_id: int):
 def delete_post_by_id(db: Session, post_id: int):
     post = db.query(Post).filter(Post.id == post_id).first()
     if post:
-        post.deleted_at = datetime.utcnow()
+        post.deleted_at = datetime.now(timezone.utc)
         db.commit()
         return {"detail": "Post deleted successfully"}
     else:

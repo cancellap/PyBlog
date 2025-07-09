@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from app.models.post_model import Post
 from app.services.post_service import create_post, get_post_by_id, delete_post_by_id,get_all_posts_include_deleted
 from app.core.db import get_db
 
