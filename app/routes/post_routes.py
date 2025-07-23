@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from app.services.post_service import create_post, get_post_by_id, delete_post_by_id,get_all_posts_include_deleted
+from app.services.post_service import create_post, get_post_by_id, delete_post_by_id,get_all_posts_include_deleted, get_all_posts
 from app.core.db import get_db
 
 router = APIRouter()
@@ -9,7 +9,6 @@ class PostCreate(BaseModel):
     title: str
     content: str
     user_id: int
-
 
 @router.post("/publish")
 def create_post_route(post: PostCreate, db: Session = Depends(get_db)):
@@ -19,6 +18,11 @@ def create_post_route(post: PostCreate, db: Session = Depends(get_db)):
 @router.get("/getsPosts/includeDeleted")
 def get_all_posts_include_deleted_endpoint(db: Session = Depends(get_db)): 
     posts = get_all_posts_include_deleted(db)
+    return posts
+
+@router.get("/getPosts")
+def get_all_posts_endpoint(db: Session = Depends(get_db)):
+    posts = get_all_posts(db)
     return posts
 
 @router.get("/getPost/{post_id}")

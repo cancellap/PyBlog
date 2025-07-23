@@ -25,7 +25,7 @@ def create_user(db: Session, user_data: UserCreateDTO)-> UserResponseDTO:
         username=user_data.username,
         email=user_data.email,
         password=hashed_password,
-        created_at=datetime.datetime.now(timezone.utc),
+        created_at=datetime.now(timezone.utc),
         posts=[]
     )
 
@@ -74,11 +74,12 @@ def get_all_posts_by_user_id(db: Session, user_id: int) -> PostWithUserDTO:
     return posts_with_user
 
 def delete_user_by_id(db: Session, user_id: int):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.id == user_id, User.is_active == 1).first()
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
     user.deleted_at = datetime.now(timezone.utc)
+    user.is_active = 0
     db.commit()
     
     return True

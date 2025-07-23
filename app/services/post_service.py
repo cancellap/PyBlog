@@ -35,3 +35,7 @@ def delete_post_by_id(db: Session, post_id: int):
 def get_all_posts_include_deleted(db: Session):
     posts = db.query(Post).all()
     return posts
+
+def get_all_posts(db: Session):
+    posts = db.query(Post).filter(Post.deleted_at == None).all()
+    return posts
