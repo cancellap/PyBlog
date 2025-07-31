@@ -4,7 +4,6 @@ from app.core.db import engine
 import app.models.users_model
 from app.routes import login_routes, post_routes, user_routes
 
-
 app = FastAPI()
 
 app.include_router(post_routes.router, prefix="/posts", tags=["posts"])

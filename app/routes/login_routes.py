@@ -8,10 +8,10 @@ from app.services.login_service import login_user
 router = APIRouter()
 
 class LoginRequest(BaseModel):
-    email: str
+    username: str
     password: str
-    
+
 @router.post("")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    access_token = login_user(request.email, request.password, db)
-    return {"access_token": access_token}
+    access_token = login_user(request.username, request.password, db)
+    return {"access_token": access_token, "token_type": "bearer"}
