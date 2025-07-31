@@ -8,8 +8,8 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
-def create_access_token(user_id: int, email: str, expires_delta: timedelta = timedelta(hours=2)):
-    expire = datetime.now(timezone.utc) + expires_delta  
+def create_access_token(user_id: int, email: str, expires_delta: timedelta = timedelta(days=3)):
+    expire = datetime.now(timezone.utc) + expires_delta
     to_encode = {
         "exp": expire,
         "user_id": user_id,
